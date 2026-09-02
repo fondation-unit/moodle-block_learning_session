@@ -26,3 +26,6 @@ $string['createsession'] = 'Create a session';
 $string['newlearningsessionblock'] = '(new Learning Session block)';
 $string['pluginname'] = 'Learning Session';
 $string['sessioncreated'] = 'Session created';
+$string['sessionenddate'] = 'Session end date';
+$string['sessionenddate_help'] = 'Set a date when this training session will end. After this date, the personal data of users enrolled in the session will be deleted.';
+$string['sessionenddatepast'] = 'The session end date has passed';

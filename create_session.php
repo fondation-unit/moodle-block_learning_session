@@ -23,13 +23,17 @@
  */
 
 require_once(__DIR__ . '/../../config.php');
+require_once(__DIR__ . '/locallib.php');
 require_once($CFG->dirroot . '/group/lib.php');
 
 $courseid = required_param('courseid', PARAM_INT);
 
+// Context checking.
 require_login($courseid);
 $context = context_course::instance($courseid);
 require_capability('block/learning_session:create_session', $context);
+
+global $DB, $OUTPUT, $PAGE, $USER;
 
 $PAGE->set_url('/blocks/learning_session/action.php', ['courseid' => $courseid]);
 $PAGE->set_context($context);
@@ -43,23 +47,30 @@ $mform = new \block_learning_session\form\create_session_form(null, ['courseid' 
 if ($mform->is_cancelled()) {
     redirect($returnurl);
 } else if ($data = $mform->get_data()) {
-    // Form validated + sesskey already checked internally by moodleform.
+    // Form validated and sesskey already checked by moodleform.
     $transaction = $DB->start_delegated_transaction();
-
+    /*
     $groupdata = new stdClass();
     $groupdata->courseid = $data->courseid;
-    $groupdata->name     = $data->groupname;
+    $groupdata->name = $data->groupname;
     $groupid = groups_create_group($groupdata);
 
     $record = new stdClass();
     $record->groupid = $groupid;
-    $record->userid  = $USER->id;
+    $record->userid = $USER->id;
     $record->timecreated = time();
     $DB->insert_record('block_learning_session_grouplog', $record);
 
     $transaction->allow_commit();
 
     redirect($returnurl, get_string('sessioncreated', 'block_learning_session'), null, \core\output\notification::NOTIFY_SUCCESS);
+
+    */
+
+    $code = block_learning_session_generate_unique_code();
+    echo $OUTPUT->header();
+    echo $code;
+    echo $OUTPUT->footer();
 } else {
     echo $OUTPUT->header();
     $mform->display();

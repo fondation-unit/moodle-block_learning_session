@@ -15,15 +15,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details
+ * The Learning Session block helper functions.
  *
- * @package    block_learning_session
- * @copyright  2026 onwards Pierre Duverneix - Fondation UNIT (http://unit.eu)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   block_learning_session
+ * @copyright 2026 onwards Pierre Duverneix - Fondation UNIT (http://unit.eu)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2026090208; // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2026041000; // Requires this Moodle version.
-$plugin->component = 'block_learning_session'; // Full name of the plugin (used for diagnostics)
+function block_learning_session_generate_unique_code($length = 8) {
+    global $DB;
+
+    do {
+        $code = strtoupper(random_string($length));
+    } while ($DB->record_exists('block_learning_session_groups', ['code' => $code]));
+
+    return $code;
+}
