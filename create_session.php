@@ -55,6 +55,8 @@ if ($mform->is_cancelled()) {
     $groupdata->courseid = $data->courseid;
     $groupdata->name = $code;
     $groupid = groups_create_group($groupdata);
+    // Add the creator to the group members.
+    groups_add_member($groupid, $USER);
 
     $record = new stdClass();
     $record->code = $code;
