@@ -4,7 +4,7 @@
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
-    <TABLE NAME="block_learning_session_groups" COMMENT="Groups created with block_learning_session.">
+    <TABLE NAME="block_learning_session_grouplog" COMMENT="Groups created with block_learning_session.">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="code" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The group unique code."/>

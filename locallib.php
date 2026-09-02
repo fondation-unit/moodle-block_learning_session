@@ -29,7 +29,7 @@ function block_learning_session_generate_unique_code($length = 8) {
 
     do {
         $code = strtoupper(random_string($length));
-    } while ($DB->record_exists('block_learning_session_groups', ['code' => $code]));
+    } while ($DB->record_exists('block_learning_session_grouplog', ['code' => $code]));
 
     return $code;
 }
