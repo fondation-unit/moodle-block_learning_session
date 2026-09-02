@@ -22,5 +22,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['createsession'] = 'Create a session';
 $string['newlearningsessionblock'] = '(new Learning Session block)';
 $string['pluginname'] = 'Learning Session';
+$string['sessioncreated'] = 'Session created';

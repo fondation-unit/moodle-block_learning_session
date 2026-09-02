@@ -92,20 +92,15 @@ class block_learning_session extends block_base {
 
         $this->content = new stdClass();
 
-        $url = new moodle_url($PAGE->url, [
-            'blockaction' => 'myaction',
-            'sesskey' => sesskey(),
+        $url = new moodle_url('/blocks/learning_session/create_session.php', [
+            'courseid' => $this->page->course->id,
         ]);
 
-        $button = html_writer::link(
+        $this->content->text = html_writer::link(
             $url,
-            get_string('myaction', 'block_myblock'),
-            [
-                'class' => 'btn btn-primary',
-            ]
+            get_string('createsession', 'block_learning_session'),
+            ['class' => 'btn btn-primary']
         );
-
-        $this->content->text = $button;
 
         return $this->content;
     }

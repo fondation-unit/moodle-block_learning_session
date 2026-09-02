@@ -15,32 +15,27 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Learning Session block capabilities.
+ * Learning Session block form for creating a new learning session.
  *
  * @package   block_learning_session
  * @copyright 2026 onwards Pierre Duverneix - Fondation UNIT (http://unit.eu)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace block_learning_session\form;
+
 defined('MOODLE_INTERNAL') || die();
 
-$capabilities = [
-    'block/learning_session:addinstance' => [
-        'captype' => 'read',
-        'contextlevel' => CONTEXT_BLOCK,
-        'archetypes' => [
-            'manager' => CAP_ALLOW,
-        ],
-        'clonepermissionsfrom' => 'moodle/site:manageblocks',
-    ],
-    'block/learning_session:create_session' => [
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_BLOCK,
-        'archetypes' => [
-            'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW,
-        ],
-        'clonepermissionsfrom' => 'moodle/site:manageblocks',
-    ],
-];
+require_once($CFG->libdir . '/formslib.php');
+
+class create_session_form extends \moodleform {
+    public function definition() {
+        $mform = $this->_form;
+        $courseid = $this->_customdata['courseid'];
+
+        $mform->addElement('hidden', 'courseid', $courseid);
+        $mform->setType('courseid', PARAM_INT);
+
+        $this->add_action_buttons(true, get_string('createsession', 'block_learning_session'));
+    }
+}
