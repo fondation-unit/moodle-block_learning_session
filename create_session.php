@@ -57,7 +57,7 @@ if ($mform->is_cancelled()) {
     $groupid = groups_create_group($groupdata);
 
     $record = new stdClass();
-    $record->groupid = $groupid;
+    $record->code = $code;
     $record->userid = $USER->id;
     $record->sessionenddate = $data->sessionenddate;
     $record->timecreated = time();
