@@ -20,9 +20,10 @@
     <TABLE NAME="block_learning_session_userlog" COMMENT="Users created with block_learning_session.">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="username" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="The generated username."/>
+        <FIELD NAME="password" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="The generated password."/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The user to sync"/>
         <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The course to sync"/>
-        <FIELD NAME="password" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="The generated user password."/>
         <FIELD NAME="sessioncode" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="The group unique code."/>
         <FIELD NAME="ip" TYPE="char" LENGTH="45" NOTNULL="false" SEQUENCE="false" COMMENT="The IP address of the client that created this record."/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The time this data request was created"/>

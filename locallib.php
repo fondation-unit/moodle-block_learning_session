@@ -34,15 +34,33 @@ function block_learning_session_generate_unique_code($length = 8) {
     return $code;
 }
 
-function block_learning_session_generate_password($length = 16) {
-    $chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789!@#$%';
-    $password = '';
+function block_learning_session_generate_password($length = 8) {
+    $upperletters = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+    $lowerletters = 'abcdefghijkmnpqrstuvwxyz';
+    $digits = '23456789';
+    $specials = '!@#$%';
 
-    for ($i = 0, $max = strlen($chars) - 1; $i < $length; $i++) {
-        $password .= $chars[random_int(0, $max)];
+    if ($length < 7) {
+        throw new coding_exception('Password length must be at least 7 characters.');
     }
 
-    return $password;
+    $password = [];
+
+    // 4 letters.
+    for ($i = 0; $i < 2; $i++) {
+        $password[] = $upperletters[random_int(0, strlen($upperletters) - 1)];
+    }
+    for ($i = 0; $i < 2; $i++) {
+        $password[] = $lowerletters[random_int(0, strlen($lowerletters) - 1)];
+    }
+    // 3 digits.
+    for ($i = 0; $i < 3; $i++) {
+        $password[] = $digits[random_int(0, strlen($digits) - 1)];
+    }
+    // 1 special character.
+    $password[] = $specials[random_int(0, strlen($specials) - 1)];
+
+    return implode('', $password);
 }
 
 function block_learning_session_check_rate_limit() {

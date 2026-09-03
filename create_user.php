@@ -50,6 +50,7 @@ if ($mform->is_cancelled()) {
 } else if ($data = $mform->get_data()) {
     // Generate a unique username.
     $token = \core\uuid::generate();
+    $pw = block_learning_session_generate_password();
     $localpart = 'user_' . substr(str_replace('-', '', $token), 0, 10);
 
     $newuser = new stdClass();
@@ -62,7 +63,7 @@ if ($mform->is_cancelled()) {
     $newuser->mnethostid  = $CFG->mnet_localhost_id;
     $newuser->lang        = current_language();
     // Controlled password generation.
-    $newuser->password = block_learning_session_generate_password();
+    $newuser->password = $pw;
 
     $transaction = $DB->start_delegated_transaction();
 
@@ -71,6 +72,9 @@ if ($mform->is_cancelled()) {
 
         $record = new stdClass();
         $record->userid = $newuserid;
+        $record->username = $newuser->username;
+        $record->password = $pw;
+        $record->courseid = $courseid;
         $record->sessioncode = $code;
         $record->ip = getremoteaddr();
         $record->timecreated = time();
