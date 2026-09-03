@@ -43,6 +43,7 @@ $PAGE->set_title(get_string('createuser', 'block_learning_session'));
 $returnurl = new moodle_url('/course/view.php', ['id' => $courseid]);
 
 $mform = new \block_learning_session\form\create_user_form();
+$mform->set_data(['code' => $code, 'courseid' => $courseid]); // Pre-fill hidden fields.
 
 if ($mform->is_cancelled()) {
     redirect($returnurl);
