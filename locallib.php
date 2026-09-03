@@ -33,3 +33,28 @@ function block_learning_session_generate_unique_code($length = 8) {
 
     return $code;
 }
+
+function block_learning_session_generate_password($length = 16) {
+    $chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789!@#$%';
+    $password = '';
+
+    for ($i = 0, $max = strlen($chars) - 1; $i < $length; $i++) {
+        $password .= $chars[random_int(0, $max)];
+    }
+
+    return $password;
+}
+
+function block_learning_session_check_rate_limit() {
+    $ip = getremoteaddr();
+    $cache = \cache::make('block_learning_session', 'ratelimit');
+    $key = 'create_' . md5($ip);
+    $count = $cache->get($key) ?: 0;
+
+    if ($count >= 5) {
+        http_response_code(429);
+        die(get_string('ratelimited', 'block_learning_session'));
+    }
+
+    $cache->set($key, $count + 1);
+}

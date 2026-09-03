@@ -15,15 +15,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details
+ * Learning Session block cache definitions.
  *
- * @package    block_learning_session
- * @copyright  2026 onwards Pierre Duverneix - Fondation UNIT (http://unit.eu)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   block_learning_session
+ * @copyright 2026 onwards Pierre Duverneix - Fondation UNIT (http://unit.eu)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die;
 
-$plugin->version   = 2026090212; // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2026041000; // Requires this Moodle version.
-$plugin->component = 'block_learning_session'; // Full name of the plugin (used for diagnostics)
+$definitions = [
+    'ratelimit' => [
+        'mode' => cache_store::MODE_APPLICATION,
+        'ttl' => 3600,
+    ],
+];

@@ -17,5 +17,22 @@
         <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
+    <TABLE NAME="block_learning_session_grouplog" COMMENT="Groups created with block_learning_session.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The user to sync"/>
+        <FIELD NAME="sessioncode" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="The group unique code."/>
+        <FIELD NAME="ip" TYPE="char" LENGTH="45" NOTNULL="false" SEQUENCE="false" COMMENT="The IP address of the client that created this record."/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The time this data request was created"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+        <KEY NAME="sessioncode" TYPE="foreign" FIELDS="sessioncode" REFTABLE="block_learning_session_grouplog" REFFIELDS="code"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="ip" UNIQUE="false" FIELDS="ip"/>
+      </INDEXES>
+    </TABLE>
   </TABLES>
 </XMLDB>

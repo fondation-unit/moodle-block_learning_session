@@ -26,14 +26,14 @@ require_once(__DIR__ . '/../../config.php');
 require_once(__DIR__ . '/locallib.php');
 require_once($CFG->dirroot . '/group/lib.php');
 
+global $DB, $OUTPUT, $PAGE, $USER;
+
 $courseid = required_param('courseid', PARAM_INT);
 
 // Context checking.
 require_login($courseid);
 $context = context_course::instance($courseid);
 require_capability('block/learning_session:create_session', $context);
-
-global $DB, $OUTPUT, $PAGE, $USER;
 
 $PAGE->set_url('/blocks/learning_session/action.php', ['courseid' => $courseid]);
 $PAGE->set_context($context);
