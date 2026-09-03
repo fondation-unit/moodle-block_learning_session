@@ -24,10 +24,14 @@
 
 require_once(__DIR__ . '/../../config.php');
 require_once(__DIR__ . '/locallib.php');
+
+global $CFG, $DB, $OUTPUT, $PAGE, $USER;
+
 require_once($CFG->dirroot . '/user/lib.php');
 require_once($CFG->dirroot . '/user/profile/lib.php');
 
-global $DB, $OUTPUT, $PAGE, $USER;
+$code = required_param('code', PARAM_TEXT);
+$courseid = required_param('courseid', PARAM_INT);
 
 $context = context_system::instance();
 
@@ -36,7 +40,7 @@ $PAGE->set_context($context);
 $PAGE->set_pagelayout('standard');
 $PAGE->set_title(get_string('createuser', 'block_learning_session'));
 
-$returnurl = new moodle_url('/admin/user.php');
+$returnurl = new moodle_url('/course/view.php', ['id' => $courseid]);
 
 $mform = new \block_learning_session\form\create_user_form();
 
@@ -56,7 +60,7 @@ if ($mform->is_cancelled()) {
     $newuser->confirmed   = 1;
     $newuser->mnethostid  = $CFG->mnet_localhost_id;
     $newuser->lang        = current_language();
-
+    // Controlled password generation.
     $newuser->password = block_learning_session_generate_password();
 
     $transaction = $DB->start_delegated_transaction();
@@ -66,7 +70,8 @@ if ($mform->is_cancelled()) {
 
         $record = new stdClass();
         $record->userid = $newuserid;
-        $record->createdby = $USER->id;
+        $record->sessioncode = $code;
+        $record->ip = getremoteaddr();
         $record->timecreated = time();
         $DB->insert_record('block_learning_session_userlog', $record);
 

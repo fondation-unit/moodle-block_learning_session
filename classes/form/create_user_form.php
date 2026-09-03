@@ -32,6 +32,12 @@ class create_user_form extends \moodleform {
     public function definition() {
         $mform = $this->_form;
 
+        $mform->addElement('hidden', 'code');
+        $mform->setType('code', PARAM_TEXT);
+
+        $mform->addElement('hidden', 'courseid');
+        $mform->setType('courseid', PARAM_INT);
+
         $mform->addElement('text', 'firstname', get_string('firstname'));
         $mform->setType('firstname', PARAM_TEXT);
         $mform->addRule('firstname', get_string('required'), 'required', null, 'client');
