@@ -51,17 +51,18 @@ if ($mform->is_cancelled()) {
     // Generate a unique username.
     $token = \core\uuid::generate();
     $pw = block_learning_session_generate_password();
-    $localpart = 'user_' . substr(str_replace('-', '', $token), 0, 10);
+    $localpart = strtolower($data->firstname[0] . $data->lastname[0])
+        . '_' . substr(str_replace('-', '', $token), 0, 8);
 
     $newuser = new stdClass();
-    $newuser->firstname   = $data->firstname;
-    $newuser->lastname    = $data->lastname;
-    $newuser->username    = strtolower($localpart);
-    $newuser->email       = $localpart . '@example.com';
-    $newuser->auth        = 'manual';
-    $newuser->confirmed   = 1;
-    $newuser->mnethostid  = $CFG->mnet_localhost_id;
-    $newuser->lang        = current_language();
+    $newuser->firstname = $data->firstname;
+    $newuser->lastname = $data->lastname;
+    $newuser->username = strtolower($localpart);
+    $newuser->email = $localpart . '@example.com';
+    $newuser->auth = 'manual';
+    $newuser->confirmed = 1;
+    $newuser->mnethostid = $CFG->mnet_localhost_id;
+    $newuser->lang = current_language();
     // Controlled password generation.
     $newuser->password = $pw;
 
