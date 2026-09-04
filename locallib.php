@@ -24,11 +24,15 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+global $CFG;
+
+require_once($CFG->dirroot . '/enrol/locallib.php');
+
 function block_learning_session_generate_unique_code($length = 8) {
     global $DB;
 
     do {
-        $code = strtoupper(random_string($length));
+        $code = random_string($length);
     } while ($DB->record_exists('block_learning_session_grouplog', ['code' => $code]));
 
     return $code;
@@ -75,4 +79,21 @@ function block_learning_session_check_rate_limit() {
     }
 
     $cache->set($key, $count + 1);
+}
+
+function block_learning_session_enrol_user($userid, $courseid, $roleid = null) {
+    global $DB;
+
+    if ($roleid === null) {
+        $studentrole = $DB->get_record('role', ['shortname' => 'student'], '*', MUST_EXIST);
+        $roleid = $studentrole->id;
+    }
+
+    $instance = $DB->get_record('enrol', [
+        'courseid' => $courseid,
+        'enrol'    => 'manual',
+    ], '*', MUST_EXIST);
+
+    $enrolplugin = enrol_get_plugin('manual');
+    $enrolplugin->enrol_user($instance, $userid, $roleid);
 }

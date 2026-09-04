@@ -27,20 +27,21 @@ require_once(__DIR__ . '/locallib.php');
 
 global $CFG, $DB, $OUTPUT, $PAGE, $USER;
 
+require_once($CFG->dirroot . '/group/lib.php');
 require_once($CFG->dirroot . '/user/lib.php');
 require_once($CFG->dirroot . '/user/profile/lib.php');
 
 $code = required_param('code', PARAM_TEXT);
 $courseid = required_param('courseid', PARAM_INT);
 
-$context = context_system::instance();
+$context = \context_system::instance();
 
 $PAGE->set_url('/blocks/learning_session/create_user.php');
 $PAGE->set_context($context);
 $PAGE->set_pagelayout('standard');
 $PAGE->set_title(get_string('createuser', 'block_learning_session'));
 
-$returnurl = new moodle_url('/course/view.php', ['id' => $courseid]);
+$returnurl = new \moodle_url('/course/view.php', ['id' => $courseid]);
 
 $mform = new \block_learning_session\form\create_user_form();
 $mform->set_data(['code' => $code, 'courseid' => $courseid]); // Pre-fill hidden fields.
@@ -54,7 +55,7 @@ if ($mform->is_cancelled()) {
     $localpart = strtolower($data->firstname[0] . $data->lastname[0])
         . '_' . substr(str_replace('-', '', $token), 0, 8);
 
-    $newuser = new stdClass();
+    $newuser = new \stdClass();
     $newuser->firstname = $data->firstname;
     $newuser->lastname = $data->lastname;
     $newuser->username = strtolower($localpart);
@@ -71,7 +72,7 @@ if ($mform->is_cancelled()) {
     try {
         $newuserid = user_create_user($newuser, true, true); // updatepassword=true, triggerevent=true.
 
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->userid = $newuserid;
         $record->username = $newuser->username;
         $record->password = $pw;
@@ -90,6 +91,12 @@ if ($mform->is_cancelled()) {
         $transaction->rollback($e);
         \core\notification::error(get_string('errorcreatinguser', 'block_learning_session'));
     }
+
+    // Enrol the user into the course.
+    block_learning_session_enrol_user($newuserid, $courseid);
+    // Add the user to the group.
+    $groupid = groups_get_group_by_name($courseid, $code);
+    groups_add_member($groupid, $newuserid);
 
     redirect($returnurl);
 } else {

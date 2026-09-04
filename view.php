@@ -15,22 +15,32 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for Learning Session block.
+ * Learning Session block action controller for creating a new learning session.
  *
  * @package   block_learning_session
  * @copyright 2026 onwards Pierre Duverneix - Fondation UNIT (http://unit.eu)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['createsession'] = 'Create a session';
-$string['createuser'] = 'Create user';
-$string['errorcreatinguser'] = 'An error occurred while creating the user.';
-$string['learning_session:create_user'] = 'Create user';
-$string['learningsession'] = 'Learning session';
-$string['newlearningsessionblock'] = '(new Learning Session block)';
-$string['pluginname'] = 'Learning Session';
-$string['sessioncreated'] = 'Session created';
-$string['sessionenddate'] = 'Session end date';
-$string['sessionenddate_help'] = 'Set a date when this training session will end. After this date, the personal data of users enrolled in the session will be deleted.';
-$string['sessionenddatepast'] = 'The session end date has passed.';
-$string['usercreated'] = 'User "{$a}" was created successfully.';
+require_once(__DIR__ . '/../../config.php');
+require_once(__DIR__ . '/locallib.php');
+
+global $CFG, $DB, $OUTPUT, $PAGE, $USER;
+
+require_once($CFG->dirroot . '/group/lib.php');
+
+$courseid = required_param('courseid', PARAM_INT);
+
+// Context checking.
+require_login($courseid);
+$context = context_course::instance($courseid);
+require_capability('block/learning_session:create_session', $context);
+
+$PAGE->set_url('/blocks/learning_session/view.php', ['courseid' => $courseid]);
+$PAGE->set_context($context);
+$PAGE->set_pagelayout('standard');
+$PAGE->set_title(get_string('learningsession', 'block_learning_session'));
+
+echo $OUTPUT->header();
+
+echo $OUTPUT->footer();

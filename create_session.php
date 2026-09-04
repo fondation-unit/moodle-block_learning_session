@@ -24,23 +24,24 @@
 
 require_once(__DIR__ . '/../../config.php');
 require_once(__DIR__ . '/locallib.php');
-require_once($CFG->dirroot . '/group/lib.php');
 
-global $DB, $OUTPUT, $PAGE, $USER;
+global $CFG, $DB, $OUTPUT, $PAGE, $USER;
+
+require_once($CFG->dirroot . '/group/lib.php');
 
 $courseid = required_param('courseid', PARAM_INT);
 
 // Context checking.
 require_login($courseid);
-$context = context_course::instance($courseid);
+$context = \context_course::instance($courseid);
 require_capability('block/learning_session:create_session', $context);
 
-$PAGE->set_url('/blocks/learning_session/action.php', ['courseid' => $courseid]);
+$PAGE->set_url('/blocks/learning_session/create_session.php', ['courseid' => $courseid]);
 $PAGE->set_context($context);
 $PAGE->set_pagelayout('standard');
 $PAGE->set_title(get_string('createsession', 'block_learning_session'));
 
-$returnurl = new moodle_url('/course/view.php', ['id' => $courseid]);
+$returnurl = new \moodle_url('/course/view.php', ['id' => $courseid]);
 
 $mform = new \block_learning_session\form\create_session_form(null, ['courseid' => $courseid]);
 
@@ -51,14 +52,14 @@ if ($mform->is_cancelled()) {
     $transaction = $DB->start_delegated_transaction();
     $code = block_learning_session_generate_unique_code();
 
-    $groupdata = new stdClass();
+    $groupdata = new \stdClass();
     $groupdata->courseid = $data->courseid;
     $groupdata->name = $code;
     $groupid = groups_create_group($groupdata);
     // Add the creator to the group members.
     groups_add_member($groupid, $USER);
 
-    $record = new stdClass();
+    $record = new \stdClass();
     $record->code = $code;
     $record->userid = $USER->id;
     $record->sessionenddate = $data->sessionenddate;
