@@ -27,6 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 
 require_once($CFG->dirroot . '/enrol/locallib.php');
+require_once($CFG->dirroot . '/group/lib.php');
 
 function block_learning_session_generate_unique_code($length = 8) {
     global $DB;
@@ -98,8 +99,26 @@ function block_learning_session_enrol_user($userid, $courseid, $roleid = null) {
     $enrolplugin->enrol_user($instance, $userid, $roleid);
 }
 
+function block_learning_session_get_existing_userlog($code, $firstname, $lastname) {
+    global $DB;
 
-function block_learning_session_get_enrolled_users($context, $courseid, $code) {
+    $sql = "SELECT sul.*
+            FROM {block_learning_session_userlog} sul
+            JOIN {user} u ON u.username = sul.username
+            WHERE u.firstname = :firstname
+            AND u.lastname = :lastname
+            AND sul.sessioncode = :sessioncode";
+
+    $userlog = $DB->get_record_sql($sql, [
+        'firstname' => $firstname,
+        'lastname' => $lastname,
+        'sessioncode' => $code,
+    ]);
+
+    return $userlog;
+}
+
+function block_learning_session_get_group_users($courseid, $code) {
     global $DB;
 
     $session = $DB->get_record(
@@ -109,5 +128,7 @@ function block_learning_session_get_enrolled_users($context, $courseid, $code) {
         MUST_EXIST,
     );
 
-    return get_enrolled_users($context, '', [$session->groupid]);
+    print_r($session);
+
+    return groups_get_members($session->groupid);
 }

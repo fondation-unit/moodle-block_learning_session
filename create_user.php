@@ -68,6 +68,13 @@ if ($mform->is_cancelled()) {
     $newuser->password = $pw;
 
     $transaction = $DB->start_delegated_transaction();
+    $existingsessionuser = block_learning_session_get_existing_user($code, $data->firstname, $data->lastname);
+
+    // An existing user for this session was found.
+    if ($existingsessionuser) {
+        $user = core_user::get_user($existingsessionuser->userid, '*', MUST_EXIST);
+        complete_user_login($user);
+    }
 
     try {
         $newuserid = user_create_user($newuser, true, true); // updatepassword=true, triggerevent=true.

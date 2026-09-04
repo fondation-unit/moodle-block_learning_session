@@ -44,6 +44,6 @@ $PAGE->set_title(get_string('learningsession', 'block_learning_session'));
 
 echo $OUTPUT->header();
 echo "<pre>";
-print_r(block_learning_session_get_enrolled_users($context, $courseid, $code));
+print_r(block_learning_session_get_group_users($courseid, $code));
 echo "</pre>";
 echo $OUTPUT->footer();
