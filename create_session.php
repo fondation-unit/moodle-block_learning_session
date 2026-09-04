@@ -42,7 +42,6 @@ $PAGE->set_pagelayout('standard');
 $PAGE->set_title(get_string('createsession', 'block_learning_session'));
 
 $returnurl = new \moodle_url('/course/view.php', ['id' => $courseid]);
-
 $mform = new \block_learning_session\form\create_session_form(null, ['courseid' => $courseid]);
 
 if ($mform->is_cancelled()) {
@@ -51,6 +50,11 @@ if ($mform->is_cancelled()) {
     // Form validated and sesskey already checked by moodleform.
     $transaction = $DB->start_delegated_transaction();
     $code = block_learning_session_generate_unique_code();
+
+    $returnurl = new \moodle_url('/blocks/learning_session/view.php', [
+        'courseid' => $courseid,
+        'code' => $code,
+    ]);
 
     $groupdata = new \stdClass();
     $groupdata->courseid = $data->courseid;
@@ -61,6 +65,8 @@ if ($mform->is_cancelled()) {
 
     $record = new \stdClass();
     $record->code = $code;
+    $record->courseid = $data->courseid;
+    $record->groupid = $groupid;
     $record->userid = $USER->id;
     $record->sessionenddate = $data->sessionenddate;
     $record->timecreated = time();
@@ -68,7 +74,12 @@ if ($mform->is_cancelled()) {
 
     $transaction->allow_commit();
 
-    redirect($returnurl, get_string('sessioncreated', 'block_learning_session'), null, \core\output\notification::NOTIFY_SUCCESS);
+    redirect(
+        $returnurl,
+        get_string('sessioncreated', 'block_learning_session'),
+        null,
+        \core\output\notification::NOTIFY_SUCCESS,
+    );
 } else {
     echo $OUTPUT->header();
     $mform->display();

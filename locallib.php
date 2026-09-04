@@ -97,3 +97,17 @@ function block_learning_session_enrol_user($userid, $courseid, $roleid = null) {
     $enrolplugin = enrol_get_plugin('manual');
     $enrolplugin->enrol_user($instance, $userid, $roleid);
 }
+
+
+function block_learning_session_get_enrolled_users($context, $courseid, $code) {
+    global $DB;
+
+    $session = $DB->get_record(
+        'block_learning_session_grouplog',
+        ['courseid' => $courseid, 'code' => $code],
+        '*',
+        MUST_EXIST,
+    );
+
+    return get_enrolled_users($context, '', [$session->groupid]);
+}

@@ -29,6 +29,7 @@ global $CFG, $DB, $OUTPUT, $PAGE, $USER;
 
 require_once($CFG->dirroot . '/group/lib.php');
 
+$code = required_param('code', PARAM_TEXT);
 $courseid = required_param('courseid', PARAM_INT);
 
 // Context checking.
@@ -42,5 +43,7 @@ $PAGE->set_pagelayout('standard');
 $PAGE->set_title(get_string('learningsession', 'block_learning_session'));
 
 echo $OUTPUT->header();
-
+echo "<pre>";
+print_r(block_learning_session_get_enrolled_users($context, $courseid, $code));
+echo "</pre>";
 echo $OUTPUT->footer();
