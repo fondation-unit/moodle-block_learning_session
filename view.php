@@ -27,6 +27,8 @@ require_once(__DIR__ . '/locallib.php');
 
 global $CFG, $DB, $OUTPUT, $PAGE, $USER;
 
+use block_learning_session\output\dashboard;
+
 require_once($CFG->dirroot . '/group/lib.php');
 
 $code = required_param('code', PARAM_TEXT);
@@ -43,7 +45,8 @@ $PAGE->set_pagelayout('standard');
 $PAGE->set_title(get_string('learningsession', 'block_learning_session'));
 
 echo $OUTPUT->header();
-echo "<pre>";
-print_r(block_learning_session_get_group_users($courseid, $code));
-echo "</pre>";
+
+$dashboard = new dashboard($code, $courseid);
+echo $OUTPUT->render($dashboard);
+
 echo $OUTPUT->footer();

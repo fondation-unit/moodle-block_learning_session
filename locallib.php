@@ -29,7 +29,8 @@ global $CFG;
 require_once($CFG->dirroot . '/enrol/locallib.php');
 require_once($CFG->dirroot . '/group/lib.php');
 
-function block_learning_session_generate_unique_code($length = 8) {
+function block_learning_session_generate_unique_code($length = 8)
+{
     global $DB;
 
     do {
@@ -39,7 +40,8 @@ function block_learning_session_generate_unique_code($length = 8) {
     return $code;
 }
 
-function block_learning_session_generate_password($length = 8) {
+function block_learning_session_generate_password($length = 8)
+{
     $upperletters = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
     $lowerletters = 'abcdefghijkmnpqrstuvwxyz';
     $digits = '23456789';
@@ -68,7 +70,8 @@ function block_learning_session_generate_password($length = 8) {
     return implode('', $password);
 }
 
-function block_learning_session_check_rate_limit() {
+function block_learning_session_check_rate_limit()
+{
     $ip = getremoteaddr();
     $cache = \cache::make('block_learning_session', 'ratelimit');
     $key = 'create_' . md5($ip);
@@ -82,7 +85,8 @@ function block_learning_session_check_rate_limit() {
     $cache->set($key, $count + 1);
 }
 
-function block_learning_session_enrol_user($userid, $courseid, $roleid = null) {
+function block_learning_session_enrol_user($userid, $courseid, $roleid = null)
+{
     global $DB;
 
     if ($roleid === null) {
@@ -99,7 +103,8 @@ function block_learning_session_enrol_user($userid, $courseid, $roleid = null) {
     $enrolplugin->enrol_user($instance, $userid, $roleid);
 }
 
-function block_learning_session_get_existing_userlog($code, $firstname, $lastname) {
+function block_learning_session_get_existing_userlog($code, $firstname, $lastname)
+{
     global $DB;
 
     $sql = "SELECT sul.*
@@ -118,7 +123,8 @@ function block_learning_session_get_existing_userlog($code, $firstname, $lastnam
     return $userlog;
 }
 
-function block_learning_session_get_group_users($courseid, $code) {
+function block_learning_session_get_group_users($courseid, $code)
+{
     global $DB;
 
     $session = $DB->get_record(
@@ -128,7 +134,16 @@ function block_learning_session_get_group_users($courseid, $code) {
         MUST_EXIST,
     );
 
-    print_r($session);
+    $users = groups_get_members($session->groupid);
+    $users = array_map(
+        static function ($user) {
+            return [
+                'firstname' => $user->firstname,
+                'lastname' => $user->lastname,
+            ];
+        },
+        array_values($users)
+    );
 
-    return groups_get_members($session->groupid);
+    return $users;
 }

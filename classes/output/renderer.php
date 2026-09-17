@@ -15,15 +15,32 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details
+ * Block Learning Session renderer.
  *
  * @package    block_learning_session
  * @copyright  2026 onwards Pierre Duverneix - Fondation UNIT (http://unit.eu)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace block_learning_session\output;
+
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2026091701; // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2026041000; // Requires this Moodle version.
-$plugin->component = 'block_learning_session'; // Full name of the plugin (used for diagnostics)
+use plugin_renderer_base;
+use renderable;
+
+class renderer extends plugin_renderer_base
+{
+    /**
+     * Defer to template.
+     * @param renderable $dashboard
+     * @return string
+     */
+    public function render_dashboard(dashboard $dashboard): string
+    {
+        return $this->render_from_template(
+            'block_learning_session/dashboard',
+            $dashboard->export_for_template($this)
+        );
+    }
+}
