@@ -28,8 +28,10 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/formslib.php');
 
-class create_session_form extends \moodleform {
-    public function definition() {
+class create_session_form extends \moodleform
+{
+    public function definition()
+    {
         $mform = $this->_form;
         $courseid = $this->_customdata['courseid'];
 
@@ -44,8 +46,8 @@ class create_session_form extends \moodleform {
         $this->add_action_buttons(true, get_string('createsession', 'block_learning_session'));
     }
 
-
-    public function validation($data, $files) {
+    public function validation($data, $files)
+    {
         $errors = parent::validation($data, $files);
 
         if (!empty($data['sessionenddate']) && $data['sessionenddate'] <= time()) {

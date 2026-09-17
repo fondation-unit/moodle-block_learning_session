@@ -68,7 +68,7 @@ if ($mform->is_cancelled()) {
     $newuser->password = $pw;
 
     $transaction = $DB->start_delegated_transaction();
-    $existingsessionuser = block_learning_session_get_existing_user($code, $data->firstname, $data->lastname);
+    $existingsessionuser = block_learning_session_get_existing_userlog($code, $data->firstname, $data->lastname);
 
     // An existing user for this session was found.
     if ($existingsessionuser) {
@@ -78,6 +78,7 @@ if ($mform->is_cancelled()) {
 
     try {
         $newuserid = user_create_user($newuser, true, true); // updatepassword=true, triggerevent=true.
+        $user = core_user::get_user($newuserid, '*', MUST_EXIST);
 
         $record = new \stdClass();
         $record->userid = $newuserid;
@@ -105,6 +106,8 @@ if ($mform->is_cancelled()) {
     $groupid = groups_get_group_by_name($courseid, $code);
     groups_add_member($groupid, $newuserid);
 
+    // Complete the login and redirect.
+    complete_user_login($user);
     redirect($returnurl);
 } else {
     echo $OUTPUT->header();
