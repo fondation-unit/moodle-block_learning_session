@@ -58,6 +58,16 @@ class dashboard implements renderable, templatable {
             $this->courseid,
             $this->code
         );
+        $users = array_values(array_map(function ($user) {
+            return [
+                'firstname' => $user->firstname,
+                'lastname' => $user->lastname,
+                'username' => $user->username,
+                'password' => $user->password,
+            ];
+        }, $users));
+
+        sul_debug($users);
 
         return [
             'code' => $this->code,

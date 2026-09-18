@@ -36,7 +36,8 @@ $courseid = required_param('courseid', PARAM_INT);
 
 // Context checking.
 require_login($courseid);
-$context = context_course::instance($courseid);
+$context = \context_course::instance($courseid);
+
 require_capability('block/learning_session:create_session', $context);
 
 $PAGE->set_url('/blocks/learning_session/view.php', ['courseid' => $courseid]);
@@ -48,5 +49,31 @@ echo $OUTPUT->header();
 
 $dashboard = new dashboard($code, $courseid);
 echo $OUTPUT->render($dashboard);
+
+$participanttable = new \core_user\table\participants(
+    'my-participants-table'
+);
+
+$filterset = new \core_user\table\participants_filterset();
+
+$filterset->add_filter(
+    new \core_table\local\filter\integer_filter(
+        'courseid',
+        \core_table\local\filter\filter::JOINTYPE_DEFAULT,
+        [(int) $courseid]
+    )
+);
+
+$filterset->add_filter(
+    new \core_table\local\filter\integer_filter(
+        'groups',
+        \core_table\local\filter\filter::JOINTYPE_DEFAULT,
+        [(int) 1] // TODO : choper le groupeid basé sur le code
+    )
+);
+
+$participanttable->set_filterset($filterset);
+
+$participanttable->out(20, true);
 
 echo $OUTPUT->footer();

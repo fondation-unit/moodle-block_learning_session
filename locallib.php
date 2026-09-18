@@ -121,23 +121,23 @@ function block_learning_session_get_existing_userlog($code, $firstname, $lastnam
 function block_learning_session_get_group_users($courseid, $code) {
     global $DB;
 
-    $session = $DB->get_record(
-        'block_learning_session_grouplog',
-        ['courseid' => $courseid, 'code' => $code],
-        '*',
-        MUST_EXIST,
-    );
+    $sql = "SELECT sul.*, u.firstname, u.lastname
+            FROM {block_learning_session_userlog} sul
+            JOIN {user} u ON u.username = sul.username
+            WHERE sul.sessioncode = :code
+            AND sul.courseid = :courseid;";
 
-    $users = groups_get_members($session->groupid);
-    $users = array_map(
-        static function ($user) {
-            return [
-                'firstname' => $user->firstname,
-                'lastname' => $user->lastname,
-            ];
-        },
-        array_values($users)
-    );
+    $users = $DB->get_records_sql($sql, [
+        'code' => $code,
+        'courseid' => $courseid,
+    ]);
 
     return $users;
+}
+
+function sul_debug($data) {
+    echo "<pre class=\"alert alert-warning alert-dismissible fade show\" role=\"alert\"><code>";
+    print_r($data);
+    echo '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>"';
+    echo "</code></pre>";
 }
