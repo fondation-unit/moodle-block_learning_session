@@ -29,15 +29,13 @@ defined('MOODLE_INTERNAL') || die();
 use plugin_renderer_base;
 use renderable;
 
-class renderer extends plugin_renderer_base
-{
+class renderer extends plugin_renderer_base {
     /**
      * Defer to template.
      * @param renderable $dashboard
      * @return string
      */
-    public function render_dashboard(dashboard $dashboard): string
-    {
+    public function render_dashboard(dashboard $dashboard): string {
         return $this->render_from_template(
             'block_learning_session/dashboard',
             $dashboard->export_for_template($this)

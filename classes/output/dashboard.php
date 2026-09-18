@@ -37,8 +37,7 @@ use templatable;
  * @copyright  2026 onwards Pierre Duverneix - Fondation UNIT (http://unit.eu)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class dashboard implements renderable, templatable
-{
+class dashboard implements renderable, templatable {
     /** @var string Code. */
     protected $code;
     /** @var int courseid. */
@@ -49,14 +48,12 @@ class dashboard implements renderable, templatable
      * @param string $code The code.
      * @param int $courseid The course id.
      */
-    public function __construct($code, $courseid)
-    {
+    public function __construct($code, $courseid) {
         $this->code = $code;
         $this->courseid = $courseid;
     }
 
-    public function export_for_template(renderer_base $output)
-    {
+    public function export_for_template(renderer_base $output) {
         $users = block_learning_session_get_group_users(
             $this->courseid,
             $this->code
