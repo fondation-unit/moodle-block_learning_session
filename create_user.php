@@ -38,7 +38,7 @@ $context = \context_system::instance();
 
 $PAGE->set_url('/blocks/learning_session/create_user.php');
 $PAGE->set_context($context);
-$PAGE->set_pagelayout('standard');
+$PAGE->set_pagelayout('mypublic');
 $PAGE->set_title(get_string('createuser', 'block_learning_session'));
 
 $returnurl = new \moodle_url('/course/view.php', ['id' => $courseid]);
@@ -74,41 +74,41 @@ if ($mform->is_cancelled()) {
     if ($existingsessionuser) {
         $user = core_user::get_user($existingsessionuser->userid, '*', MUST_EXIST);
         complete_user_login($user);
+    } else {
+        try {
+            $newuserid = user_create_user($newuser, true, true); // updatepassword=true, triggerevent=true.
+            $user = core_user::get_user($newuserid, '*', MUST_EXIST);
+
+            $record = new \stdClass();
+            $record->userid = $newuserid;
+            $record->username = $newuser->username;
+            $record->password = $pw;
+            $record->courseid = $courseid;
+            $record->sessioncode = $code;
+            $record->ip = getremoteaddr();
+            $record->timecreated = time();
+            $DB->insert_record('block_learning_session_userlog', $record);
+
+            $transaction->allow_commit();
+
+            \core\notification::success(
+                get_string('usercreated', 'block_learning_session', $newuser->username)
+            );
+        } catch (\Exception $e) {
+            $transaction->rollback($e);
+            \core\notification::error(get_string('errorcreatinguser', 'block_learning_session'));
+        }
+
+        // Enrol the user into the course.
+        block_learning_session_enrol_user($newuserid, $courseid);
+        // Add the user to the group.
+        $groupid = groups_get_group_by_name($courseid, $code);
+        groups_add_member($groupid, $newuserid);
+
+        // Complete the login and redirect.
+        complete_user_login($user);
+        redirect($returnurl);
     }
-
-    try {
-        $newuserid = user_create_user($newuser, true, true); // updatepassword=true, triggerevent=true.
-        $user = core_user::get_user($newuserid, '*', MUST_EXIST);
-
-        $record = new \stdClass();
-        $record->userid = $newuserid;
-        $record->username = $newuser->username;
-        $record->password = $pw;
-        $record->courseid = $courseid;
-        $record->sessioncode = $code;
-        $record->ip = getremoteaddr();
-        $record->timecreated = time();
-        $DB->insert_record('block_learning_session_userlog', $record);
-
-        $transaction->allow_commit();
-
-        \core\notification::success(
-            get_string('usercreated', 'block_learning_session', $newuser->username)
-        );
-    } catch (\Exception $e) {
-        $transaction->rollback($e);
-        \core\notification::error(get_string('errorcreatinguser', 'block_learning_session'));
-    }
-
-    // Enrol the user into the course.
-    block_learning_session_enrol_user($newuserid, $courseid);
-    // Add the user to the group.
-    $groupid = groups_get_group_by_name($courseid, $code);
-    groups_add_member($groupid, $newuserid);
-
-    // Complete the login and redirect.
-    complete_user_login($user);
-    redirect($returnurl);
 } else {
     echo $OUTPUT->header();
     $mform->display();

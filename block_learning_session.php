@@ -22,14 +22,18 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class block_learning_session extends block_base {
-    function init() {
+    /**
+     * Init function.
+     * @return void
+     */
+    public function init() {
         $this->title = get_string('pluginname', 'block_learning_session');
     }
 
     /**
      * The block has a global configuration settings form.
      *
-     * @return bool 
+     * @return bool
      */
     function has_config() {
         return true;
@@ -84,8 +88,6 @@ class block_learning_session extends block_base {
     }
 
     function get_content() {
-        global $PAGE;
-
         if ($this->content !== null) {
             return $this->content;
         }

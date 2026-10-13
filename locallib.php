@@ -107,7 +107,9 @@ function block_learning_session_get_existing_userlog($code, $firstname, $lastnam
             JOIN {user} u ON u.username = sul.username
             WHERE u.firstname = :firstname
             AND u.lastname = :lastname
-            AND sul.sessioncode = :sessioncode";
+            AND sul.sessioncode = :sessioncode
+            ORDER BY sul.id DESC
+            LIMIT 1";
 
     $userlog = $DB->get_record_sql($sql, [
         'firstname' => $firstname,
