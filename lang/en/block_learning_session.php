@@ -25,7 +25,8 @@
 $string['createsession'] = 'Create a session';
 $string['createuser'] = 'Create user';
 $string['errorcreatinguser'] = 'An error occurred while creating the user.';
-$string['learning_session:create_user'] = 'Create user';
+$string['learning_session:addinstance'] = 'Add instance';
+$string['learning_session:create_session'] = 'Create session';
 $string['learningsession'] = 'Learning session';
 $string['newlearningsessionblock'] = '(new Learning Session block)';
 $string['pluginname'] = 'Learning Session';

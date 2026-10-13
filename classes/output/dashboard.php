@@ -24,8 +24,6 @@
 
 namespace block_learning_session\output;
 
-defined('MOODLE_INTERNAL') || die();
-
 use renderable;
 use renderer_base;
 use templatable;
@@ -58,6 +56,16 @@ class dashboard implements renderable, templatable {
             $this->courseid,
             $this->code
         );
+        $users = array_values(array_map(function ($user) {
+            return [
+                'firstname' => $user->firstname,
+                'lastname' => $user->lastname,
+                'username' => $user->username,
+                'password' => $user->password,
+            ];
+        }, $users));
+
+        sul_debug($users);
 
         return [
             'code' => $this->code,
