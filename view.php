@@ -64,16 +64,7 @@ $filterset->add_filter(
     )
 );
 
-$filterset->add_filter(
-    new \core_table\local\filter\integer_filter(
-        'groups',
-        \core_table\local\filter\filter::JOINTYPE_DEFAULT,
-        [(int) 1] // TODO : choper le groupeid basé sur le code
-    )
-);
-
 $participanttable->set_filterset($filterset);
-
 $participanttable->out(20, true);
 
 echo $OUTPUT->footer();

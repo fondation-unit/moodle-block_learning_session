@@ -120,21 +120,98 @@ function block_learning_session_get_existing_userlog($code, $firstname, $lastnam
     return $userlog;
 }
 
-function block_learning_session_get_group_users($courseid, $code) {
+function block_learning_session_get_group_users($courseid, $sessioncode) {
     global $DB;
 
     $sql = "SELECT sul.*, u.firstname, u.lastname
             FROM {block_learning_session_userlog} sul
             JOIN {user} u ON u.username = sul.username
-            WHERE sul.sessioncode = :code
+            WHERE sul.sessioncode = :sessioncode
             AND sul.courseid = :courseid;";
 
     $users = $DB->get_records_sql($sql, [
-        'code' => $code,
+        'sessioncode' => $sessioncode,
         'courseid' => $courseid,
     ]);
 
     return $users;
+}
+
+function block_learning_session_create_pdf(array $data, int $userid, int $courseid) {
+    global $CFG;
+
+    require_once($CFG->libdir . '/pdflib.php');
+
+    $course = get_course($courseid);
+
+    // Set up PDF document.
+    $pdf = new pdf();
+    $pdf->SetCreator(PDF_CREATOR);
+    $pdf->SetAuthor(fullname($user));
+    $pdf->SetTitle(get_string('user_list', 'block_learning_session'));
+    $pdf->setPrintHeader(false);
+    $pdf->setPrintFooter(false);
+    $pdf->SetMargins(15, 15, 15);
+    $pdf->AddPage();
+    $pdf->SetFont('freesans', '', 10);
+
+    $html = '<h3>' . get_string('user_list', 'block_learning_session') . ' - ' . s($course->fullname) . '</h3>';
+
+    $html .= '<table cellpadding="4" cellspacing="0" border="1">';
+
+    $html .= '<tr>';
+    $html .= '<th>' . get_string('firstname') . ' & ' . strtolower(get_string('lastname')) . '</th>';
+    $html .= '<th>' . get_string('username') . '</th>';
+    $html .= '<th>' . get_string('password') . '</th>';
+    $html .= '</tr>';
+
+    foreach ($data as $user) {
+        $html .= '<tr>';
+        $html .= '<td>' . s($user->firstname) . ' ' . s($user->lastname) . '</td>';
+        $html .= '<td>' . s($user->username) . '</td>';
+        $html .= '<td>' . s($user->password) . '</td>';
+        $html .= '</tr>';
+    }
+
+    $html .= '</table>';
+
+
+    $pdf->writeHTML($html, true, false, true, false, '');
+    $filename = "session-data-{$courseid}.pdf";
+    $filecontent = $pdf->Output($filename, 'S'); // 'S' = return as string.
+
+    return block_learning_session_write_new_file($filecontent, $filename, $userid);
+}
+
+function block_learning_session_write_new_file(string $content, string $filename, int $userid) {
+    $context = \context_user::instance($userid);
+
+    $fs = get_file_storage();
+    $fileinfo = [
+        'contextid' => $context->id,
+        'component' => 'block_learning_session',
+        'filearea' => 'sessiondata',
+        'itemid' => 0,
+        'filepath' => '/',
+        'filename' => $filename,
+    ];
+
+    $file = $fs->get_file(
+        $fileinfo['contextid'],
+        $fileinfo['component'],
+        $fileinfo['filearea'],
+        $fileinfo['itemid'],
+        $fileinfo['filepath'],
+        $fileinfo['filename'],
+    );
+
+    if ($file) {
+        $file->delete(); // Delete the old file first.
+    }
+
+    $file = $fs->create_file_from_string($fileinfo, $content);
+
+    return $file;
 }
 
 function sul_debug($data) {

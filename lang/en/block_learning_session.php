@@ -34,4 +34,6 @@ $string['sessioncreated'] = 'Session created';
 $string['sessionenddate'] = 'Session end date';
 $string['sessionenddate_help'] = 'Set a date when this training session will end. After this date, the personal data of users enrolled in the session will be deleted.';
 $string['sessionenddatepast'] = 'The session end date has passed.';
+$string['task:request_data'] = 'Request data';
 $string['usercreated'] = 'User "{$a}" was created successfully.';
+$string['user_list'] = 'User list';
