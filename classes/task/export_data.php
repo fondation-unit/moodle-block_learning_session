@@ -28,9 +28,12 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__ . '../../../locallib.php');
 
+use core\message\message;
+use moodle_url;
+
 class export_data extends \core\task\adhoc_task {
     public function get_name(): string {
-        return get_string('task:request_data', 'learning_session');
+        return get_string('task:export_data', 'block_learning_session');
     }
 
     public function execute(): void {
@@ -39,19 +42,56 @@ class export_data extends \core\task\adhoc_task {
         $data = $this->get_custom_data();
 
         $users = block_learning_session_get_group_users($data->courseid, $data->sessioncode);
-
-        foreach ($users as $user) {
-            mtrace("{$user->username} {$user->password}");
-        }
-
         $file = block_learning_session_create_pdf($users, $data->userid, $data->courseid);
 
         if ($file) {
-            $filename = $file->get_filename();
-            $filepath = $file->get_filepath();
-
-            mtrace($filename);
-            mtrace($filepath);
+            foreach ($users as $user) {
+                mtrace("{$user->username} {$user->password}");
+            }
+            self::generate_message($data->userid, $data->courseid, $data->sessioncode, $file);
         }
+    }
+
+    private static function generate_message(int $userid, int $courseid, string $sessioncode, \stored_file $file) {
+        $contexturl = new moodle_url('/blocks/learning_session/view.php', [
+            'courseid' => $courseid,
+            'sessioncode' => $sessioncode,
+        ]);
+
+        $fullmessage = get_string('messageprovider:export_data_fullmessage', 'block_learning_session');
+        $smallmessage = get_string('messageprovider:export_data_smallmessage', 'block_learning_session');
+
+        $fileurl = moodle_url::make_pluginfile_url(
+            $file->get_contextid(),
+            $file->get_component(),
+            $file->get_filearea(),
+            $file->get_itemid(),
+            $file->get_filepath(),
+            $file->get_filename(),
+            false
+        );
+
+        $fullmessage .= '<p><a href="' . $fileurl->out(false) . '" target="_blank">' . $fileurl->out(false) . '</a></p>';
+
+        $message = new message();
+        $message->component         = 'block_learning_session';
+        $message->name              = 'export_data';
+        $message->userfrom          = \core_user::get_noreply_user();
+        $message->userto            = $userid;
+        $message->subject           = get_string('messageprovider:export_data', 'block_learning_session');
+        $message->fullmessageformat = FORMAT_HTML;
+        $message->fullmessage       = html_to_text($fullmessage);
+        $message->fullmessagehtml   = $fullmessage;
+        $message->smallmessage      = $smallmessage;
+        $message->notification      = 1;
+        $message->contexturl        = $contexturl;
+        $message->contexturlname    = get_string('task:export_data', 'block_learning_session');
+
+        if ($file) {
+            $message->attachment = $file;
+            $message->attachname = $file->get_filename();
+        }
+
+        message_send($message);
     }
 }

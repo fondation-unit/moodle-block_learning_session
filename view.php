@@ -31,7 +31,7 @@ use block_learning_session\output\dashboard;
 
 require_once($CFG->dirroot . '/group/lib.php');
 
-$code = required_param('code', PARAM_TEXT);
+$sessioncode = required_param('sessioncode', PARAM_TEXT);
 $courseid = required_param('courseid', PARAM_INT);
 
 // Context checking.
@@ -47,7 +47,7 @@ $PAGE->set_title(get_string('learningsession', 'block_learning_session'));
 
 echo $OUTPUT->header();
 
-$dashboard = new dashboard($code, $courseid);
+$dashboard = new dashboard($courseid, $sessioncode, $USER->id);
 echo $OUTPUT->render($dashboard);
 
 $participanttable = new \core_user\table\participants(

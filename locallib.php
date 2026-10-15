@@ -142,6 +142,7 @@ function block_learning_session_create_pdf(array $data, int $userid, int $course
 
     require_once($CFG->libdir . '/pdflib.php');
 
+    $user = \core_user::get_user($userid);
     $course = get_course($courseid);
 
     // Set up PDF document.
