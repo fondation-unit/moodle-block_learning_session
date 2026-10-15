@@ -58,6 +58,7 @@ class dashboard implements renderable, templatable {
     public function export_for_template(renderer_base $output) {
         global $PAGE;
 
+        // Include the AMD export_data script and pass the server side parameters.
         $PAGE->requires->js_call_amd(
             'block_learning_session/export_data',
             'init',

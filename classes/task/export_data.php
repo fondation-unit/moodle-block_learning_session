@@ -45,9 +45,6 @@ class export_data extends \core\task\adhoc_task {
         $file = block_learning_session_create_pdf($users, $data->userid, $data->courseid);
 
         if ($file) {
-            foreach ($users as $user) {
-                mtrace("{$user->username} {$user->password}");
-            }
             self::generate_message($data->userid, $data->courseid, $data->sessioncode, $file);
         }
     }
