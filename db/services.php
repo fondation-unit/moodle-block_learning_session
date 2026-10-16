@@ -33,4 +33,12 @@ $functions = [
         'type' => 'read',
         'services' => [],
     ],
+    'block_learning_session_reset_password' => [
+        'classname' => 'block_learning_session\external\reset_password',
+        'methodname' => 'execute',
+        'description' => 'Reset a user password',
+        'ajax' => true,
+        'type' => 'write',
+        'loginrequired' => true,
+    ],
 ];

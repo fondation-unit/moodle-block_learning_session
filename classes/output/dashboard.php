@@ -69,6 +69,11 @@ class dashboard implements renderable, templatable {
             ]
         );
 
+        $PAGE->requires->js_call_amd(
+            'block_learning_session/reset_password',
+            'init'
+        );
+
         $users = block_learning_session_get_group_users(
             $this->courseid,
             $this->sessioncode
@@ -76,10 +81,12 @@ class dashboard implements renderable, templatable {
 
         $users = array_values(array_map(function ($user) {
             return [
+                'id' => $user->id,
                 'firstname' => $user->firstname,
                 'lastname' => $user->lastname,
                 'username' => $user->username,
                 'password' => $user->password,
+                'userid' => $user->userid,
             ];
         }, $users));
 
