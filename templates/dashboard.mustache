@@ -1,7 +1,31 @@
 <h1>Dashboard</h1>
-<p>Code : {{code}}</p>
-<ul>
+<p>Code : {{sessioncode}}</p>
+
+<label for="block_learning_session-request_data">Send PDF</label>
+<button id="block_learning_session-request_data" class="btn btn-primary">
+  Click me
+</button>
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Username</th>
+    <th>Password</th>
+    <th>ResetPassword</th>
+  </tr>
   {{#users}}
-    <li>{{firstname}} {{lastname}} : {{username}} / {{password}}</li>
+    <tr>
+      <td>{{firstname}} {{lastname}}</td>
+      <td>{{username}}</td>
+      <td>{{password}}</td>
+      <td>
+        <button
+            type="button"
+            data-userid="{{userid}}"
+            class="btn btn-primary block_learning_session-reset_password">
+            Reset password
+        </button>
+      </td>
+    </tr>
   {{/users}}
-</ul>
+</table>

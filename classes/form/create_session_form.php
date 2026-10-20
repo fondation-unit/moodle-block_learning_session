@@ -37,9 +37,16 @@ class create_session_form extends \moodleform {
         $mform->setType('courseid', PARAM_INT);
 
         // Add a session end date to let the plugin purge data if needed.
+        $mform->addElement(
+            'advcheckbox',
+            'hassessioneenddate',
+            get_string('hassessioneenddate', 'block_learning_session')
+        );
+
         $mform->addElement('date_time_selector', 'sessionenddate', get_string('sessionenddate', 'block_learning_session'));
         $mform->addHelpButton('sessionenddate', 'sessionenddate', 'block_learning_session');
-        $mform->addRule('sessionenddate', get_string('required'), 'required', null, 'client');
+
+        $mform->hideIf('sessionenddate', 'hassessioneenddate', 'notchecked');
 
         $this->add_action_buttons(true, get_string('createsession', 'block_learning_session'));
     }

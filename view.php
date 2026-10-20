@@ -31,7 +31,7 @@ use block_learning_session\output\dashboard;
 
 require_once($CFG->dirroot . '/group/lib.php');
 
-$code = required_param('code', PARAM_TEXT);
+$sessioncode = required_param('sessioncode', PARAM_TEXT);
 $courseid = required_param('courseid', PARAM_INT);
 
 // Context checking.
@@ -47,7 +47,7 @@ $PAGE->set_title(get_string('learningsession', 'block_learning_session'));
 
 echo $OUTPUT->header();
 
-$dashboard = new dashboard($code, $courseid);
+$dashboard = new dashboard($courseid, $sessioncode, $USER->id);
 echo $OUTPUT->render($dashboard);
 
 $participanttable = new \core_user\table\participants(
@@ -64,16 +64,7 @@ $filterset->add_filter(
     )
 );
 
-$filterset->add_filter(
-    new \core_table\local\filter\integer_filter(
-        'groups',
-        \core_table\local\filter\filter::JOINTYPE_DEFAULT,
-        [(int) 1] // TODO : choper le groupeid basé sur le code
-    )
-);
-
 $participanttable->set_filterset($filterset);
-
 $participanttable->out(20, true);
 
 echo $OUTPUT->footer();

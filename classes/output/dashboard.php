@@ -36,39 +36,62 @@ use templatable;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class dashboard implements renderable, templatable {
-    /** @var string Code. */
-    protected $code;
     /** @var int courseid. */
     protected $courseid;
+    /** @var string Session code. */
+    protected $sessioncode;
+    /** @var int userid. */
+    protected $userid;
 
     /**
      * Constructor.
-     * @param string $code The code.
      * @param int $courseid The course id.
+     * @param string $sessioncode The session code.
+     * @param int $userid The user id.
      */
-    public function __construct($code, $courseid) {
-        $this->code = $code;
-        $this->courseid = $courseid;
+    public function __construct($courseid, $sessioncode, $userid) {
+        $this->courseid = (int) $courseid;
+        $this->sessioncode = $sessioncode;
+        $this->userid = (int) $userid;
     }
 
     public function export_for_template(renderer_base $output) {
+        global $PAGE;
+
+        // Include the AMD export_data script and pass the server side parameters.
+        $PAGE->requires->js_call_amd(
+            'block_learning_session/export_data',
+            'init',
+            [
+                'courseid' => $this->courseid,
+                'sessioncode' => $this->sessioncode,
+                'userid' => $this->userid,
+            ]
+        );
+
+        $PAGE->requires->js_call_amd(
+            'block_learning_session/reset_password',
+            'init'
+        );
+
         $users = block_learning_session_get_group_users(
             $this->courseid,
-            $this->code
+            $this->sessioncode
         );
+
         $users = array_values(array_map(function ($user) {
             return [
+                'id' => $user->id,
                 'firstname' => $user->firstname,
                 'lastname' => $user->lastname,
                 'username' => $user->username,
                 'password' => $user->password,
+                'userid' => $user->userid,
             ];
         }, $users));
 
-        sul_debug($users);
-
         return [
-            'code' => $this->code,
+            'sessioncode' => $this->sessioncode,
             'users' => $users,
         ];
     }
